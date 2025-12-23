@@ -3,6 +3,7 @@ package anon.seamlessauth.auth;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -47,8 +48,19 @@ public class KeyManager {
             prvKey = pair.getPrivate();
 
             try {
-                Files.write(Paths.get(pubKeyPath), pubKey.getEncoded());
-                Files.write(Paths.get(prvKeyPath), prvKey.getEncoded());
+                Path pubPath = Paths.get(pubKeyPath);
+                Path prvPath = Paths.get(prvKeyPath);
+
+                // Create the directories if they don't exist
+                if (pubPath.getParent() != null) {
+                    Files.createDirectories(pubPath.getParent());
+                }
+                if (prvPath.getParent() != null) {
+                    Files.createDirectories(prvPath.getParent());
+                }
+
+                Files.write(pubPath, pubKey.getEncoded());
+                Files.write(prvPath, prvKey.getEncoded());
             } catch (IOException ioException) {
                 SeamlessAuth.LOG
                     .fatal("failed to write keys, crashing to prevent usage of unrecoverable keys", ioException);

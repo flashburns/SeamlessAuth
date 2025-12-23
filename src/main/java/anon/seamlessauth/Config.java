@@ -80,8 +80,10 @@ public class Config {
     }
 
     public static String expandPath(String original) {
-        String result = original;
-        if (result.startsWith("~/")) result = result.replaceFirst("~", System.getProperty("user.home"));
-        return result;
+        if (original == null) return null;
+        if (original.startsWith("~")) {
+            return System.getProperty("user.home") + original.substring(1);
+        }
+        return original;
     }
 }
